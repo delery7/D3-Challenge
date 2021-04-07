@@ -61,23 +61,24 @@ d3.csv("data.csv").then(function(stateData) {
     .data(stateData)
     .enter()
     .append("circle")
-    .text(function(d) {return (d.abbr)})
+    // .text(function(d) {return (d.abbr)})
     .attr("cx", d => xLinearScale(d.healthcare))
     .attr("cy", d => yLinearScale(d.poverty))
     .attr("r", "15")
-    .attr("fill", "red")
-    .attr("opacity", ".5");
+    .attr("fill", "blue")
+    .attr("opacity", ".7");
 
-    var circlesText = chartGroup.selectAll("text")
+    var circlesText = chartGroup.selectAll(".label")
     .data(stateData)
     .enter()
     .append("text")
     .text(function(d) {return (d.abbr)})
-    .attr("x", d => xLinearScale(d.healthcare)-12)
-    .attr("y", d => yLinearScale(d.poverty)+5);
-    // .attr("r", "15")
-    // .attr("fill", "red")
-    // .attr("opacity", ".5");
+    .attr("x", d => xLinearScale(d.healthcare)-11)
+    .attr("y", d => yLinearScale(d.poverty)+5)
+    .style('fill','white')
+    // .attr("fill", "white")
+    // .attr("opacity", "0")
+    ;
 
     // Step 6: Initialize tool tip
     // ==============================
@@ -94,7 +95,7 @@ d3.csv("data.csv").then(function(stateData) {
 
     // Step 8: Create event listeners to display and hide the tooltip
     // ==============================
-    circlesGroup.on("click", function(data) {
+    circlesGroup.on("mouseover", function(data) {
       toolTip.show(data, this);
     })
       // onmouseout event
@@ -109,7 +110,7 @@ d3.csv("data.csv").then(function(stateData) {
       .attr("x", 0 - (height*.75))
       .attr("dy", "1em")
       .attr("class", "axisText")
-      .text("Doesn't have healthcare (%)");
+      .text("No Healthcare (% of Population)");
 
     chartGroup.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
