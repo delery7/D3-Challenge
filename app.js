@@ -61,7 +61,6 @@ d3.csv("data.csv").then(function(stateData) {
     .data(stateData)
     .enter()
     .append("circle")
-    // .text(function(d) {return (d.abbr)})
     .attr("cx", d => xLinearScale(d.healthcare))
     .attr("cy", d => yLinearScale(d.poverty))
     .attr("r", "15")
@@ -75,10 +74,7 @@ d3.csv("data.csv").then(function(stateData) {
     .text(function(d) {return (d.abbr)})
     .attr("x", d => xLinearScale(d.healthcare)-11)
     .attr("y", d => yLinearScale(d.poverty)+5)
-    .style('fill','white')
-    // .attr("fill", "white")
-    // .attr("opacity", "0")
-    ;
+    .style('fill','white');
 
     // Step 6: Initialize tool tip
     // ==============================
