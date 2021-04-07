@@ -1,4 +1,4 @@
-// @TODO: YOUR CODE HERE!
+// python -m http.server
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -12,8 +12,8 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
-var svg = d3.select(".chart")
+// Create an SVG wrapper, append an SVG group that will hold the chart, and shift it by left and top margins.
+var svg = d3.select(".row")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
@@ -22,23 +22,23 @@ var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 // Import Data
-d3.csv("hairData.csv").then(function(hairData) {
+d3.csv("data.csv").then(function(stateData) {
 
     // Step 1: Parse Data/Cast as numbers
     // ==============================
-    hairData.forEach(function(data) {
-      data.hair_length = +data.hair_length;
-      data.num_hits = +data.num_hits;
+    stateData.forEach(function(data) {
+      data.poverty = +data.poverty;
+      data.healthcare = +data.healthcare;
     });
 
     // Step 2: Create scale functions
     // ==============================
     var xLinearScale = d3.scaleLinear()
-      .domain([20, d3.max(hairData, d => d.hair_length)])
+      .domain([3, d3.max(stateData, d => d.poverty)])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(hairData, d => d.num_hits)])
+      .domain([6, d3.max(stateData, d => d.healthcare)])
       .range([height, 0]);
 
     // Step 3: Create axis functions
@@ -58,14 +58,26 @@ d3.csv("hairData.csv").then(function(hairData) {
     // Step 5: Create Circles
     // ==============================
     var circlesGroup = chartGroup.selectAll("circle")
-    .data(hairData)
+    .data(stateData)
     .enter()
     .append("circle")
-    .attr("cx", d => xLinearScale(d.hair_length))
-    .attr("cy", d => yLinearScale(d.num_hits))
+    .text(function(d) {return (d.abbr)})
+    .attr("cx", d => xLinearScale(d.healthcare))
+    .attr("cy", d => yLinearScale(d.poverty))
     .attr("r", "15")
-    .attr("fill", "pink")
+    .attr("fill", "red")
     .attr("opacity", ".5");
+
+    var circlesText = chartGroup.selectAll("text")
+    .data(stateData)
+    .enter()
+    .append("text")
+    .text(function(d) {return (d.abbr)})
+    .attr("x", d => xLinearScale(d.healthcare)-12)
+    .attr("y", d => yLinearScale(d.poverty)+5);
+    // .attr("r", "15")
+    // .attr("fill", "red")
+    // .attr("opacity", ".5");
 
     // Step 6: Initialize tool tip
     // ==============================
@@ -73,7 +85,7 @@ d3.csv("hairData.csv").then(function(hairData) {
       .attr("class", "tooltip")
       .offset([80, -60])
       .html(function(d) {
-        return (`${d.rockband}<br>Hair length: ${d.hair_length}<br>Hits: ${d.num_hits}`);
+        return (`State: ${d.abbr}<br>Lacks Healthcare (%): ${d.healthcare}<br>In Poverty (%): ${d.poverty}`);
       });
 
     // Step 7: Create tooltip in the chart
@@ -93,16 +105,16 @@ d3.csv("hairData.csv").then(function(hairData) {
     // Create axes labels
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left + 40)
-      .attr("x", 0 - (height / 2))
+      .attr("y", 0 - margin.left + 50)
+      .attr("x", 0 - (height*.75))
       .attr("dy", "1em")
       .attr("class", "axisText")
-      .text("Number of Billboard 100 Hits");
+      .text("Doesn't have healthcare (%)");
 
     chartGroup.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
       .attr("class", "axisText")
-      .text("Hair Metal Band Hair Length (inches)");
+      .text("In Poverty (% of Population)");
   }).catch(function(error) {
     console.log(error);
   });
